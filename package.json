@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "./node_modules/.bin/ng serve  --proxy-config ./proxy.json",
+    "start": "./node_modules/.bin/ng serve --port 5000  --proxy-config ./proxy.json",
     "server": "./node_modules/.bin/ts-node -P ./server/server.tsconfig.json ./server/server.ts",
     "build": "ng build",
     "test": "ng test",
@@ -50,6 +50,7 @@
     "karma-coverage-istanbul-reporter": "^1.2.1",
     "karma-jasmine": "~1.1.0",
     "karma-jasmine-html-reporter": "^0.2.2",
+    "prettier": "^2.0.5",
     "protractor": "^6.0.0",
     "ts-node": "~3.2.0",
     "tslint": "~5.7.0",

@@ -1,60 +1,64 @@
-import {Component, OnInit} from '@angular/core';
-import {Course, sortCoursesBySeqNo} from '../model/course';
-import {interval, noop, Observable, of, throwError, timer} from 'rxjs';
-import {catchError, delay, delayWhen, filter, finalize, map, retryWhen, shareReplay, tap} from 'rxjs/operators';
-import {HttpClient} from '@angular/common/http';
-import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
-import {CourseDialogComponent} from '../course-dialog/course-dialog.component';
-
+import { Component, OnInit } from '@angular/core';
+import { Course, sortCoursesBySeqNo } from '../model/course';
+import { CoursesCardListComponent } from '../courses-card-list/courses-card-list.component';
+import { interval, noop, Observable, of, throwError, timer } from 'rxjs';
+import {
+  catchError,
+  delay,
+  delayWhen,
+  filter,
+  finalize,
+  map,
+  retryWhen,
+  shareReplay,
+  tap,
+} from 'rxjs/operators';
+import { CoursesService } from '../services/courses.service';
 
 @Component({
   selector: 'home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  template: `<div class="courses-panel">
+    <h3>All Courses</h3>
+
+    <mat-tab-group>
+      <mat-tab label="Beginners">
+        <courses-card-list
+          [courses]="beginnerCourses$ | async"
+          (coursesChanged)="reloadCourses()"
+        ></courses-card-list>
+      </mat-tab>
+
+      <mat-tab label="Advanced">
+        <courses-card-list
+          [courses]="advancedCourses$ | async"
+          (coursesChanged)="reloadCourses()"
+        ></courses-card-list>
+      </mat-tab>
+    </mat-tab-group>
+  </div> `,
+  styleUrls: ['./home.component.css'],
 })
 export class HomeComponent implements OnInit {
+  beginnerCourses$: Observable<Course[]>;
 
-  beginnerCourses: Course[];
+  advancedCourses$: Observable<Course[]>;
 
-  advancedCourses: Course[];
-
-
-  constructor(private http: HttpClient, private dialog: MatDialog) {
-
-  }
+  constructor(private coursesService: CoursesService) {}
 
   ngOnInit() {
-
-    this.http.get('/api/courses')
-      .subscribe(
-        res => {
-
-          const courses: Course[] = res["payload"].sort(sortCoursesBySeqNo);
-
-          this.beginnerCourses = courses.filter(course => course.category == "BEGINNER");
-
-          this.advancedCourses = courses.filter(course => course.category == "ADVANCED");
-
-        });
-
+    this.reloadCourses();
   }
 
-  editCourse(course: Course) {
+  public reloadCourses() {
+    const courses$ = this.coursesService
+      .getAllCourses()
+      .pipe(map((courses) => courses.sort(sortCoursesBySeqNo)));
 
-    const dialogConfig = new MatDialogConfig();
-
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = "400px";
-
-    dialogConfig.data = course;
-
-    const dialogRef = this.dialog.open(CourseDialogComponent, dialogConfig);
-
+    this.beginnerCourses$ = courses$.pipe(
+      map((courses) => courses.filter((course) => course.category === 'BEGINNER')),
+    );
+    this.advancedCourses$ = courses$.pipe(
+      map((courses) => courses.filter((course) => course.category === 'ADVANCED')),
+    );
   }
-
 }
-
-
-
-
