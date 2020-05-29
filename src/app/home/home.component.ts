@@ -15,6 +15,7 @@ import {
 } from 'rxjs/operators';
 import { CoursesService } from '../services/courses.service';
 import { LoadingService } from '../loading/loading.service';
+import { MessagesService } from '../messages/messages.service';
 
 @Component({
   selector: 'home',
@@ -44,7 +45,11 @@ export class HomeComponent implements OnInit {
 
   advancedCourses$: Observable<Course[]>;
 
-  constructor(private coursesService: CoursesService, private loadingService: LoadingService) {}
+  constructor(
+    private coursesService: CoursesService,
+    private loadingService: LoadingService,
+    private messagesService: MessagesService,
+  ) {}
 
   ngOnInit() {
     this.reloadCourses();
@@ -54,6 +59,11 @@ export class HomeComponent implements OnInit {
     // this.loadingService.toggleLoading(true);
     const courses$ = this.coursesService.getAllCourses().pipe(
       map((courses) => courses.sort(sortCoursesBySeqNo)),
+      catchError(err => {
+        const message = `Couldn't load courses`;
+        this.messagesService.showErrors(message);
+        return throwError(err);
+      })
       // finalize(() => this.loadingService.toggleLoading(false)),
     );
     const loadCourses$ = this.loadingService.showLoaderUntilCompleted(courses$);
