@@ -8,31 +8,33 @@ import { Observable } from 'rxjs';
 
 @Component({
   selector: 'courses-card-list',
-  template: `<mat-card *ngFor="let course of courses" class="course-card mat-elevation-z10">
-    <mat-card-header>
-      <mat-card-title>{{ course.description }}</mat-card-title>
-    </mat-card-header>
+  template: `
+    <mat-card *ngFor="let course of courses" class="course-card mat-elevation-z10">
+      <mat-card-header>
+        <mat-card-title>{{ course.description }}</mat-card-title>
+      </mat-card-header>
 
-    <img mat-card-image [src]="course.iconUrl" />
+      <img mat-card-image [src]="course.iconUrl" />
 
-    <mat-card-content>
-      <p>{{ course.longDescription }}</p>
-    </mat-card-content>
+      <mat-card-content>
+        <p>{{ course.longDescription }}</p>
+      </mat-card-content>
 
-    <mat-card-actions class="course-actions">
-      <button
-        mat-button
-        class="mat-raised-button mat-primary"
-        [routerLink]="['/courses', course.id]"
-      >
-        VIEW COURSE
-      </button>
+      <mat-card-actions class="course-actions">
+        <button
+          mat-button
+          class="mat-raised-button mat-primary"
+          [routerLink]="['/courses', course.id]"
+        >
+          VIEW COURSE
+        </button>
 
-      <button mat-button class="mat-raised-button mat-accent" (click)="editCourse(course)">
-        EDIT
-      </button>
-    </mat-card-actions>
-  </mat-card> `,
+        <button mat-button class="mat-raised-button mat-accent" (click)="editCourse(course)">
+          EDIT
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  `,
   styleUrls: ['./courses-card-list.component.css'],
 })
 export class CoursesCardListComponent implements OnInit {

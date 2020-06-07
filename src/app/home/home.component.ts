@@ -19,25 +19,27 @@ import { MessagesService } from '../messages/messages.service';
 
 @Component({
   selector: 'home',
-  template: `<div class="courses-panel">
-    <h3>All Courses</h3>
+  template: `
+    <div class="courses-panel">
+      <h3>All Courses</h3>
 
-    <mat-tab-group>
-      <mat-tab label="Beginners">
-        <courses-card-list
-          [courses]="beginnerCourses$ | async"
-          (coursesChanged)="reloadCourses()"
-        ></courses-card-list>
-      </mat-tab>
+      <mat-tab-group>
+        <mat-tab label="Beginners">
+          <courses-card-list
+            [courses]="beginnerCourses$ | async"
+            (coursesChanged)="reloadCourses()"
+          ></courses-card-list>
+        </mat-tab>
 
-      <mat-tab label="Advanced">
-        <courses-card-list
-          [courses]="advancedCourses$ | async"
-          (coursesChanged)="reloadCourses()"
-        ></courses-card-list>
-      </mat-tab>
-    </mat-tab-group>
-  </div> `,
+        <mat-tab label="Advanced">
+          <courses-card-list
+            [courses]="advancedCourses$ | async"
+            (coursesChanged)="reloadCourses()"
+          ></courses-card-list>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  `,
   styleUrls: ['./home.component.css'],
 })
 export class HomeComponent implements OnInit {
@@ -56,14 +58,14 @@ export class HomeComponent implements OnInit {
   }
 
   public reloadCourses() {
-    // this.loadingService.toggleLoading(true);
     const courses$ = this.coursesService.getAllCourses().pipe(
       map((courses) => courses.sort(sortCoursesBySeqNo)),
       catchError(err => {
         const message = `Couldn't load courses`;
         this.messagesService.showErrors(message);
+        console.log(err, message);
         return throwError(err);
-      })
+      }),
       // finalize(() => this.loadingService.toggleLoading(false)),
     );
     const loadCourses$ = this.loadingService.showLoaderUntilCompleted(courses$);
